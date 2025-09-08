@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planejamento de HH - Sistema de Controle de Efetivo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Design System Colors */
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #64748b;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --surface: #ffffff;
+            --background: #f8fafc;
+            --border: #e2e8f0;
+        }
+
+        /* Modern Glass Effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Smooth Animations */
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .animate-slide-up {
+            animation: slideUp 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Modern Sidebar */
+        .sidebar {
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 3px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Modern Input Styles */
+        .modern-input {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .modern-input:focus {
+            background: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+            outline: none;
+        }
+
+        /* Modern Button Styles */
+        .btn-modern {
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-modern:hover::before {
+            left: 100%;
+        }
+
+        /* Modern Table Styles */
+        .modern-table {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .table-header-modern {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        /* Status Indicators */
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .status-online { background: #10b981; animation: pulse 2s infinite; }
+        .status-warning { background: #f59e0b; }
+        .status-offline { background: #ef4444; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Modern Metric Cards */
+        .metric-card {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #f1f5f9;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary) 0%, #06b6d4 100%);
+        }
+
+        .metric-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        /* Navigation Active State */
+        .nav-item-active {
+            background: rgba(59, 130, 246, 0.1);
+            border-right: 3px solid #3b82f6;
+            color: #3b82f6;
+        }
+
+        /* Modern Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            width: 48px;
+            height: 24px;
+            background: #cbd5e1;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: var(--primary);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(24px);
+        }
+
+        /* Chart Filter Buttons */
+        .chart-filter-btn.active {
+            background: #dbeafe !important;
+            color: #1d4ed8 !important;
+        }
+
+        /* Chart Container */
+        #trendsChart {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <!-- Mobile Menu Button -->
+    <button id="mobileMenuBtn" class="lg:hidden fixed top-4 left-4 z-50 bg-white p-3 rounded-xl shadow-lg">
+        <i class="fas fa-bars text-gray-700"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar fixed left-0 top-0 h-full w-72 z-40 transition-transform duration-300">
+        <div class="p-8">
+            <!-- Logo -->
+            <div class="flex items-center mb-12">
+                <div class="bg-blue-500 p-3 rounded-xl mr-4">
+                    <i class="fas fa-chart-line text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-white text-xl font-bold">Planejamento</h1>
+                    <p class="text-blue-300 text-sm">Analítico</p>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="space-y-2">
+                <a href="#" class="nav-item nav-item-active flex items-center px-4 py-3 rounded-xl text-white transition-all duration-200" data-section="dashboard">
+                    <i class="fas fa-tachometer-alt mr-3"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item flex items-center px-4 py-3 rounded-xl text-blue-300 hover:text-white hover:bg-blue-600/20 transition-all duration-200" data-section="planning">
+                    <i class="fas fa-calendar-alt mr-3"></i>
+                    <span>Planejamento</span>
+                </a>
+                <a href="#" class="nav-item flex items-center px-4 py-3 rounded-xl text-blue-300 hover:text-white hover:bg-blue-600/20 transition-all duration-200" data-section="execution">
+                    <i class="fas fa-play-circle mr-3"></i>
+                    <span>Execução</span>
+                </a>
+                <a href="#" class="nav-item flex items-center px-4 py-3 rounded-xl text-blue-300 hover:text-white hover:bg-blue-600/20 transition-all duration-200" data-section="analytics">
+                    <i class="fas fa-chart-bar mr-3"></i>
+                    <span>Análises</span>
+                </a>
+                <a href="#" class="nav-item flex items-center px-4 py-3 rounded-xl text-blue-300 hover:text-white hover:bg-blue-600/20 transition-all duration-200" data-section="settings">
+                    <i class="fas fa-cog mr-3"></i>
+                    <span>Configurações</span>
+                </a>
+            </nav>
+
+            <!-- Status Panel -->
+            <div class="mt-12 bg-blue-800/30 rounded-xl p-4">
+                <h3 class="text-white font-semibold mb-3">Status do Sistema</h3>
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-blue-200 text-sm">Conexão</span>
+                        <span class="status-dot status-online"></span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-blue-200 text-sm">Sincronização</span>
+                        <span class="status-dot status-online"></span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-blue-200 text-sm">Backup</span>
+                        <span class="status-dot status-warning"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="lg:ml-72 min-h-screen">
+        <!-- Header -->
+        <header class="bg-white border-b border-gray-200 px-8 py-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900" id="pageTitle">Dashboard</h2>
+                    <p class="text-gray-600 mt-1" id="pageSubtitle">Visão geral do sistema de controle de efetivo</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="text-right">
+                        <p class="text-sm text-gray-600">Período Atual</p>
+                        <p class="font-semibold" id="currentPeriod">Semana 45/2024</p>
+                    </div>
+                    <div class="w-px h-8 bg-gray-300"></div>
+                    <button class="btn-modern bg-blue-600 text-white px-6 py-2 rounded-xl">
+                        <i class="fas fa-download mr-2"></i>
+                        Exportar
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Sections -->
+        <main class="p-8 custom-scrollbar">
+            <!-- Dashboard Section -->
+            <div id="dashboard-section" class="section-content">
+                <!-- Metrics Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 animate-fade-in">
+                    <div class="metric-card">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="bg-blue-100 p-3 rounded-xl">
+                                <i class="fas fa-calendar-check text-blue-600 text-xl"></i>
+                            </div>
+                            <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-full">PLANEJADO</span>
+                        </div>
+                        <h3 class="text-3xl font-bold text-gray-900 mb-1" id="totalPlanned">0h</h3>
+                        <p class="text-gray-600 text-sm">Total de horas planejadas</p>
+                        <div class="mt-4 flex items-center">
+                            <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-500 h-2 rounded-full" style="width: 75%"></div>
+                            </div>
+                            <span class="ml-2 text-xs text-gray-500">75%</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="bg-green-100 p-3 rounded-xl">
+                                <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                            </div>
+                            <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-full">REALIZADO</span>
+                        </div>
+                        <h3 class="text-3xl font-bold text-gray-900 mb-1" id="totalReal">0h</h3>
+                        <p class="text-gray-600 text-sm">Total de horas executadas</p>
+                        <div class="mt-4 flex items-center">
+                            <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                <div class="bg-green-500 h-2 rounded-full" style="width: 68%"></div>
+                            </div>
+                            <span class="ml-2 text-xs text-gray-500">68%</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="bg-orange-100 p-3 rounded-xl">
+                                <i class="fas fa-percentage text-orange-600 text-xl"></i>
+                            </div>
+                            <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-full">EFICIÊNCIA</span>
+                        </div>
+                        <h3 class="text-3xl font-bold text-gray-900 mb-1" id="efficiency">0%</h3>
+                        <p class="text-gray-600 text-sm">Taxa de execução</p>
+                        <div class="mt-4 flex items-center">
+                            <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                <div class="bg-orange-500 h-2 rounded-full" style="width: 91%"></div>
+                            </div>
+                            <span class="ml-2 text-xs text-gray-500">91%</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="bg-red-100 p-3 rounded-xl">
+                                <i class="fas fa-chart-line text-red-600 text-xl"></i>
+                            </div>
+                            <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-full">VARIAÇÃO</span>
+                        </div>
+                        <h3 class="text-3xl font-bold text-gray-900 mb-1" id="variance">0h</h3>
+                        <p class="text-gray-600 text-sm">Diferença real vs planejado</p>
+                        <div class="mt-4 flex items-center">
+                            <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                <div class="bg-red-500 h-2 rounded-full" style="width: 23%"></div>
+                            </div>
+                            <span class="ml-2 text-xs text-gray-500">-23%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="glass-card rounded-2xl p-6 mb-8 animate-slide-up">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Ações Rápidas</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <button class="btn-modern bg-blue-600 text-white p-4 rounded-xl text-left hover:bg-blue-700">
+                            <i class="fas fa-plus-circle text-2xl mb-2"></i>
+                            <h4 class="font-semibold">Novo Planejamento</h4>
+                            <p class="text-sm opacity-90">Criar novo período de análise</p>
+                        </button>
+                        <button class="btn-modern bg-green-600 text-white p-4 rounded-xl text-left hover:bg-green-700">
+                            <i class="fas fa-play text-2xl mb-2"></i>
+                            <h4 class="font-semibold">Iniciar Execução</h4>
+                            <p class="text-sm opacity-90">Começar registro de horas</p>
+                        </button>
+                        <button class="btn-modern bg-purple-600 text-white p-4 rounded-xl text-left hover:bg-purple-700">
+                            <i class="fas fa-chart-bar text-2xl mb-2"></i>
+                            <h4 class="font-semibold">Ver Relatórios</h4>
+                            <p class="text-sm opacity-90">Análises detalhadas</p>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="glass-card rounded-2xl p-6 animate-slide-up">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-semibold text-gray-900">Atividade Recente</h3>
+                        <button class="text-blue-600 hover:text-blue-700 text-sm font-medium">Ver todas</button>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex items-center p-3 bg-gray-50 rounded-xl">
+                            <div class="bg-blue-100 p-2 rounded-lg mr-4">
+                                <i class="fas fa-calendar-plus text-blue-600"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-medium text-gray-900">Planejamento atualizado</p>
+                                <p class="text-sm text-gray-600">Semana 45 - Função Soldador</p>
+                            </div>
+                            <span class="text-xs text-gray-500">2 min atrás</span>
+                        </div>
+                        <div class="flex items-center p-3 bg-gray-50 rounded-xl">
+                            <div class="bg-green-100 p-2 rounded-lg mr-4">
+                                <i class="fas fa-check text-green-600"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-medium text-gray-900">Execução registrada</p>
+                                <p class="text-sm text-gray-600">Turno diurno - Mecânico</p>
+                            </div>
+                            <span class="text-xs text-gray-500">15 min atrás</span>
+                        </div>
+                        <div class="flex items-center p-3 bg-gray-50 rounded-xl">
+                            <div class="bg-orange-100 p-2 rounded-lg mr-4">
+                                <i class="fas fa-exclamation-triangle text-orange-600"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-medium text-gray-900">Alerta de variação</p>
+                                <p class="text-sm text-gray-600">Efetivo abaixo do planejado</p>
+                            </div>
+                            <span class="text-xs text-gray-500">1 hora atrás</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Planning Section -->
+            <div id="planning-section" class="section-content hidden">
+                <!-- Planning Table -->
+                <div class="modern-table animate-slide-up">
+                    <div class="table-header-modern p-6">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-gray-900">Efetivo Planejado</h3>
+                            <button id="clearPlanned" class="btn-modern bg-red-100 text-red-700 px-4 py-2 rounded-lg hover:bg-red-200">
+                                <i class="fas fa-trash mr-2"></i>
+                                Limpar
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="overflow-x-auto">
+                            <table class="w-full" id="plannedTable">
+                                <thead id="plannedTableHead"></thead>
+                                <tbody id="plannedTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Execution Section -->
+            <div id="execution-section" class="section-content hidden">
+                <div class="modern-table animate-slide-up">
+                    <div class="table-header-modern p-6">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-gray-900">Efetivo Real</h3>
+                            <button id="clearReal" class="btn-modern bg-red-100 text-red-700 px-4 py-2 rounded-lg hover:bg-red-200">
+                                <i class="fas fa-trash mr-2"></i>
+                                Limpar
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="overflow-x-auto">
+                            <table class="w-full" id="realTable">
+                                <thead id="realTableHead"></thead>
+                                <tbody id="realTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Section -->
+            <div id="analytics-section" class="section-content hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Summary Cards - Smaller with scroll -->
+                    <div class="lg:col-span-1">
+                        <div class="glass-card rounded-2xl p-4">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Resumo por Função</h3>
+                            <div class="h-96 overflow-y-auto custom-scrollbar space-y-3" id="summaryContainer">
+                                <!-- Summary will be generated here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Charts - Larger -->
+                    <div class="lg:col-span-2">
+                        <div class="glass-card rounded-2xl p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-lg font-semibold text-gray-900">Análise de Tendências</h3>
+                                <div class="flex space-x-2">
+                                    <button class="chart-filter-btn active px-3 py-1 rounded-lg text-sm font-medium bg-blue-100 text-blue-700" data-filter="all">Todas</button>
+                                    <button class="chart-filter-btn px-3 py-1 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100" data-filter="planned">Planejado</button>
+                                    <button class="chart-filter-btn px-3 py-1 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100" data-filter="real">Real</button>
+                                </div>
+                            </div>
+                            <div class="h-96 relative">
+                                <canvas id="trendsChart" class="w-full h-full"></canvas>
+                            </div>
+                            <div class="mt-4 flex items-center justify-center space-x-6 text-sm">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+                                    <span class="text-gray-600">Planejado</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                                    <span class="text-gray-600">Real</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-orange-500 rounded-full mr-2"></div>
+                                    <span class="text-gray-600">Eficiência</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Section -->
+            <div id="settings-section" class="section-content hidden">
+                <!-- Period Configuration -->
+                <div class="glass-card rounded-2xl p-8 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-6">Configuração do Período</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Data de Início</label>
+                            <input type="date" id="startDate" class="modern-input w-full px-4 py-3 rounded-xl border border-gray-300">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Número de Semanas</label>
+                            <select id="weekCount" class="modern-input w-full px-4 py-3 rounded-xl border border-gray-300">
+                                <option value="1">1 Semana</option>
+                                <option value="2">2 Semanas</option>
+                                <option value="3">3 Semanas</option>
+                                <option value="4" selected>4 Semanas</option>
+                                <option value="5">5 Semanas</option>
+                                <option value="6">6 Semanas</option>
+                                <option value="7">7 Semanas</option>
+                                <option value="8">8 Semanas</option>
+                                <option value="9">9 Semanas</option>
+                                <option value="10">10 Semanas</option>
+                                <option value="11">11 Semanas</option>
+                                <option value="12">12 Semanas</option>
+                            </select>
+                        </div>
+                        <div class="flex items-end">
+                            <button id="updatePeriod" class="btn-modern bg-blue-600 text-white px-6 py-3 rounded-xl w-full">
+                                <i class="fas fa-sync-alt mr-2"></i>
+                                Atualizar Período
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Work Schedule Configuration -->
+                <div class="glass-card rounded-2xl p-8">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-6">Configurações de Jornada</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Horário de Entrada</label>
+                            <input type="time" id="startTime" value="07:30" class="modern-input w-full px-4 py-3 rounded-xl border border-gray-300">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Horário de Saída</label>
+                            <input type="time" id="endTime" value="17:18" class="modern-input w-full px-4 py-3 rounded-xl border border-gray-300">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Intervalo (minutos)</label>
+                            <input type="number" id="breakTime" value="60" min="0" class="modern-input w-full px-4 py-3 rounded-xl border border-gray-300">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Jornada Líquida</label>
+                            <div class="bg-gray-100 px-4 py-3 rounded-xl text-center">
+                                <span class="text-lg font-bold text-gray-900" id="hoursPerDay">8h 48min</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Global variables
+        let currentPeriodDates = [];
+        let weekCount = 4;
+        let currentSection = 'dashboard';
+
+        // Functions
+        const functions = {
+            meiooficial: { name: 'MEIO OFICIAL', icon: 'tools', color: 'blue' },
+            soldador: { name: 'SOLDADOR', icon: 'fire', color: 'orange' },
+            caldeireiro: { name: 'CALDEIREIRO', icon: 'hammer', color: 'purple' },
+            mecanico: { name: 'MECÂNICO', icon: 'wrench', color: 'red' },
+            encarregado: { name: 'ENCARREGADO', icon: 'user-tie', color: 'indigo' },
+            eletricista: { name: 'ELETRICISTA', icon: 'bolt', color: 'yellow' },
+            almoxarife: { name: 'ALMOXARIFE', icon: 'boxes', color: 'green' },
+            administrativo: { name: 'ADMINISTRATIVO', icon: 'clipboard', color: 'gray' },
+            tecnicoseguranca: { name: 'TÉCNICO DE SEGURANÇA', icon: 'shield-alt', color: 'emerald' },
+            planejador: { name: 'PLANEJADOR', icon: 'calendar-alt', color: 'cyan' },
+            supervisor: { name: 'SUPERVISOR', icon: 'eye', color: 'teal' },
+            coordenador: { name: 'COORDENADOR', icon: 'users-cog', color: 'pink' }
+        };
+
+        // Navigation
+        function switchSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.section-content').forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            // Show selected section
+            document.getElementById(`${sectionName}-section`).classList.remove('hidden');
+            
+            // Update navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('nav-item-active');
+            });
+            document.querySelector(`[data-section="${sectionName}"]`).classList.add('nav-item-active');
+            
+            // Update page title
+            const titles = {
+                dashboard: { title: 'Dashboard', subtitle: 'Visão geral do sistema de controle de efetivo' },
+                planning: { title: 'Planejamento', subtitle: 'Configuração do efetivo planejado' },
+                execution: { title: 'Execução', subtitle: 'Registro do efetivo real' },
+                analytics: { title: 'Análises', subtitle: 'Relatórios e comparativos' },
+                settings: { title: 'Configurações', subtitle: 'Parâmetros do sistema' }
+            };
+            
+            document.getElementById('pageTitle').textContent = titles[sectionName].title;
+            document.getElementById('pageSubtitle').textContent = titles[sectionName].subtitle;
+            
+            currentSection = sectionName;
+        }
+
+        // Date functions
+        function formatDate(date) {
+            return date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+        }
+        
+        function addDays(date, days) {
+            const result = new Date(date);
+            result.setDate(result.getDate() + days);
+            return result;
+        }
+        
+        function generatePeriodDates() {
+            const startDateInput = document.getElementById('startDate');
+            if (!startDateInput.value) {
+                const today = new Date();
+                const dayOfWeek = today.getDay();
+                const daysUntilMonday = dayOfWeek === 0 ? 1 : 8 - dayOfWeek;
+                const nextMonday = addDays(today, daysUntilMonday);
+                startDateInput.value = nextMonday.toISOString().split('T')[0];
+            }
+            
+            const startDate = new Date(startDateInput.value + 'T00:00:00');
+            currentPeriodDates = [];
+            
+            for (let week = 0; week < weekCount; week++) {
+                const weekDates = [];
+                for (let day = 0; day < 7; day++) {
+                    const currentDate = addDays(startDate, week * 7 + day);
+                    weekDates.push(currentDate);
+                }
+                currentPeriodDates.push(weekDates);
+            }
+        }
+
+        // Calculate daily hours
+        function calculateDailyHours() {
+            const startTime = document.getElementById('startTime').value;
+            const endTime = document.getElementById('endTime').value;
+            const breakMinutes = parseInt(document.getElementById('breakTime').value) || 0;
+
+            if (!startTime || !endTime) return { hours: 8, minutes: 48 };
+
+            const start = new Date(`2000-01-01T${startTime}:00`);
+            const end = new Date(`2000-01-01T${endTime}:00`);
+            
+            let diffMs = end - start;
+            if (diffMs < 0) diffMs += 24 * 60 * 60 * 1000;
+            
+            const totalMinutes = Math.floor(diffMs / (1000 * 60)) - breakMinutes;
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+
+            return { hours, minutes };
+        }
+
+        function updateDailyHours() {
+            const { hours, minutes } = calculateDailyHours();
+            document.getElementById('hoursPerDay').textContent = `${hours}h ${minutes.toString().padStart(2, '0')}min`;
+            calculateTotals();
+        }
+
+        // Generate table header
+        function generateTableHeader(tableType) {
+            const dayNames = ['SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB', 'DOM'];
+            
+            let headerHTML = `
+                <tr class="border-b border-gray-200">
+                    <th class="text-left py-4 px-4 font-semibold text-gray-900">Função</th>`;
+            
+            for (let week = 0; week < weekCount; week++) {
+                for (let day = 0; day < 7; day++) {
+                    headerHTML += `
+                        <th class="text-center py-4 px-2 font-semibold text-gray-900">
+                            <div class="text-xs">${dayNames[day]}</div>
+                            <div class="text-xs text-gray-500 mt-1" id="date-${week}-${day}"></div>
+                        </th>`;
+                }
+            }
+            
+            headerHTML += `<th class="text-center py-4 px-4 font-semibold text-gray-900">TOTAL</th></tr>`;
+            
+            // Subheader for day/night
+            headerHTML += `<tr class="border-b border-gray-200 bg-gray-50">
+                <th class="py-2 px-4"></th>`;
+            
+            for (let week = 0; week < weekCount; week++) {
+                for (let day = 0; day < 7; day++) {
+                    headerHTML += `
+                        <th class="py-2 px-0">
+                            <div class="flex text-xs">
+                                <span class="flex-1 text-orange-600 font-medium">DIA</span>
+                                <span class="flex-1 text-blue-600 font-medium">NOITE</span>
+                            </div>
+                        </th>`;
+                }
+            }
+            
+            headerHTML += `<th class="py-2 px-4"></th></tr>`;
+            
+            return headerHTML;
+        }
+
+        // Generate function row
+        function generateFunctionRow(func, funcData, tableType) {
+            let rowHTML = `
+                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                    <td class="py-4 px-4">
+                        <div class="flex items-center">
+                            <div class="bg-${funcData.color}-100 p-2 rounded-lg mr-3">
+                                <i class="fas fa-${funcData.icon} text-${funcData.color}-600"></i>
+                            </div>
+                            <span class="font-medium text-gray-900">${funcData.name}</span>
+                        </div>
+                    </td>`;
+            
+            const dayNames = ['seg', 'ter', 'qua', 'qui', 'sex', 'sab', 'dom'];
+            for (let week = 0; week < weekCount; week++) {
+                for (let day = 0; day < 7; day++) {
+                    rowHTML += `
+                        <td class="py-2 px-0">
+                            <div class="flex">
+                                <input type="number" class="flex-1 text-center border border-gray-200 rounded-l px-1 py-1 text-sm modern-input" 
+                                       data-table="${tableType}" data-function="${func}" data-week="${week}" data-day="${dayNames[day]}" data-shift="day" min="0" max="50" value="">
+                                <input type="number" class="flex-1 text-center border border-gray-200 rounded-r px-1 py-1 text-sm modern-input" 
+                                       data-table="${tableType}" data-function="${func}" data-week="${week}" data-day="${dayNames[day]}" data-shift="night" min="0" max="50" value="">
+                            </div>
+                        </td>`;
+                }
+            }
+            
+            rowHTML += `
+                <td class="py-4 px-4 text-center font-semibold text-gray-900" id="${tableType}-total-${func}">0h</td>
+            </tr>`;
+            
+            return rowHTML;
+        }
+
+        // Generate summary
+        function generateSummary() {
+            const summaryContainer = document.getElementById('summaryContainer');
+            let summaryHTML = '';
+            
+            Object.keys(functions).forEach(func => {
+                const funcData = functions[func];
+                summaryHTML += `
+                    <div class="bg-white rounded-lg p-3 border border-gray-200 shadow-sm">
+                        <div class="flex items-center mb-2">
+                            <div class="bg-${funcData.color}-100 p-1.5 rounded-lg mr-2">
+                                <i class="fas fa-${funcData.icon} text-${funcData.color}-600 text-sm"></i>
+                            </div>
+                            <h4 class="font-medium text-gray-900 text-sm">${funcData.name}</h4>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 text-xs">
+                            <div class="text-center">
+                                <div class="text-gray-600 mb-1">Planejado</div>
+                                <div class="font-bold text-blue-600" id="summary-planned-${func}">0h</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-gray-600 mb-1">Real</div>
+                                <div class="font-bold text-green-600" id="summary-real-${func}">0h</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-gray-600 mb-1">Diferença</div>
+                                <div class="font-bold" id="summary-diff-${func}">0h</div>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+            
+            summaryContainer.innerHTML = summaryHTML;
+        }
+
+        // Generate tables
+        function generateTables() {
+            // Generate planned table
+            const plannedHead = document.getElementById('plannedTableHead');
+            const plannedBody = document.getElementById('plannedTableBody');
+            
+            plannedHead.innerHTML = generateTableHeader('planned');
+            
+            let plannedBodyHTML = '';
+            Object.keys(functions).forEach(func => {
+                plannedBodyHTML += generateFunctionRow(func, functions[func], 'planned');
+            });
+            plannedBody.innerHTML = plannedBodyHTML;
+            
+            // Generate real table
+            const realHead = document.getElementById('realTableHead');
+            const realBody = document.getElementById('realTableBody');
+            
+            realHead.innerHTML = generateTableHeader('real');
+            
+            let realBodyHTML = '';
+            Object.keys(functions).forEach(func => {
+                realBodyHTML += generateFunctionRow(func, functions[func], 'real');
+            });
+            realBody.innerHTML = realBodyHTML;
+            
+            updateDateHeaders();
+            addInputEventListeners();
+            generateSummary();
+        }
+
+        // Update date headers
+        function updateDateHeaders() {
+            for (let week = 0; week < weekCount; week++) {
+                for (let day = 0; day < 7; day++) {
+                    const dateElements = document.querySelectorAll(`#date-${week}-${day}`);
+                    if (currentPeriodDates[week] && currentPeriodDates[week][day]) {
+                        const dateStr = formatDate(currentPeriodDates[week][day]);
+                        dateElements.forEach(el => el.textContent = dateStr);
+                    }
+                }
+            }
+        }
+
+        // Add input event listeners
+        function addInputEventListeners() {
+            document.querySelectorAll('input[data-table]').forEach(input => {
+                input.addEventListener('input', calculateTotals);
+            });
+        }
+
+        // Calculate totals
+        function calculateTotals() {
+            const { hours: dailyHours, minutes: dailyMinutes } = calculateDailyHours();
+            const dailyTotalMinutes = dailyHours * 60 + dailyMinutes;
+
+            Object.keys(functions).forEach(func => {
+                ['planned', 'real'].forEach(table => {
+                    let totalMinutes = 0;
+                    const inputs = document.querySelectorAll(`input[data-table="${table}"][data-function="${func}"]`);
+                    
+                    inputs.forEach(input => {
+                        const people = parseInt(input.value) || 0;
+                        totalMinutes += people * dailyTotalMinutes;
+                    });
+
+                    const totalHours = Math.floor(totalMinutes / 60);
+                    const display = `${totalHours}h`;
+                    
+                    const totalElement = document.getElementById(`${table}-total-${func}`);
+                    const summaryElement = document.getElementById(`summary-${table}-${func}`);
+                    
+                    if (totalElement) totalElement.textContent = display;
+                    if (summaryElement) summaryElement.textContent = display;
+                });
+
+                // Calculate difference
+                const plannedElement = document.getElementById(`summary-planned-${func}`);
+                const realElement = document.getElementById(`summary-real-${func}`);
+                const diffElement = document.getElementById(`summary-diff-${func}`);
+                
+                if (plannedElement && realElement && diffElement) {
+                    const plannedHours = parseInt(plannedElement.textContent) || 0;
+                    const realHours = parseInt(realElement.textContent) || 0;
+                    const diff = realHours - plannedHours;
+                    
+                    diffElement.textContent = `${diff >= 0 ? '+' : ''}${diff}h`;
+                    diffElement.className = `font-bold ${diff > 0 ? 'text-green-600' : diff < 0 ? 'text-red-600' : 'text-gray-600'}`;
+                }
+            });
+            
+            updateDashboardMetrics();
+            updateChart();
+        }
+
+        // Update dashboard metrics
+        function updateDashboardMetrics() {
+            let totalPlanned = 0;
+            let totalReal = 0;
+
+            Object.keys(functions).forEach(func => {
+                const plannedElement = document.getElementById(`summary-planned-${func}`);
+                const realElement = document.getElementById(`summary-real-${func}`);
+                
+                const plannedHours = plannedElement ? parseInt(plannedElement.textContent) || 0 : 0;
+                const realHours = realElement ? parseInt(realElement.textContent) || 0 : 0;
+                
+                totalPlanned += plannedHours;
+                totalReal += realHours;
+            });
+
+            const variance = totalReal - totalPlanned;
+            const efficiency = totalPlanned > 0 ? ((totalReal / totalPlanned) * 100) : 0;
+
+            document.getElementById('totalPlanned').textContent = `${totalPlanned}h`;
+            document.getElementById('totalReal').textContent = `${totalReal}h`;
+            document.getElementById('variance').textContent = `${variance >= 0 ? '+' : ''}${variance}h`;
+            document.getElementById('efficiency').textContent = `${efficiency.toFixed(1)}%`;
+        }
+
+        // Update period
+        function updatePeriod() {
+            weekCount = parseInt(document.getElementById('weekCount').value);
+            generatePeriodDates();
+            generateTables();
+            calculateTotals();
+        }
+
+        // Clear table
+        function clearTable(table) {
+            const inputs = document.querySelectorAll(`input[data-table="${table}"]`);
+            inputs.forEach(input => input.value = '');
+            calculateTotals();
+        }
+
+        // Update current period display
+        function updateCurrentPeriod() {
+            const now = new Date();
+            const startOfYear = new Date(now.getFullYear(), 0, 1);
+            const pastDaysOfYear = (now - startOfYear) / 86400000;
+            const weekNumber = Math.ceil((pastDaysOfYear + startOfYear.getDay() + 1) / 7);
+            
+            document.getElementById('currentPeriod').textContent = `Semana ${weekNumber}/${now.getFullYear()}`;
+        }
+
+        // Chart variables
+        let trendsChart = null;
+        let chartData = {
+            planned: [],
+            real: [],
+            efficiency: []
+        };
+
+        // Initialize chart
+        function initChart() {
+            const canvas = document.getElementById('trendsChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas size based on container
+            const container = canvas.parentElement;
+            canvas.width = container.offsetWidth;
+            canvas.height = container.offsetHeight;
+            
+            updateChart();
+        }
+
+        // Update chart with current data
+        function updateChart() {
+            const canvas = document.getElementById('trendsChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            
+            // Ensure canvas has proper dimensions
+            const container = canvas.parentElement;
+            if (container) {
+                canvas.width = container.offsetWidth;
+                canvas.height = container.offsetHeight;
+            }
+            
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            if (width === 0 || height === 0) return;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+            
+            // Get data for chart
+            const functionNames = Object.keys(functions);
+            const plannedData = [];
+            const realData = [];
+            
+            functionNames.forEach(func => {
+                const plannedElement = document.getElementById(`summary-planned-${func}`);
+                const realElement = document.getElementById(`summary-real-${func}`);
+                
+                const plannedHours = plannedElement ? parseInt(plannedElement.textContent.replace('h', '')) || 0 : 0;
+                const realHours = realElement ? parseInt(realElement.textContent.replace('h', '')) || 0 : 0;
+                
+                plannedData.push(plannedHours);
+                realData.push(realHours);
+            });
+            
+            // Chart dimensions
+            const padding = 60;
+            const chartWidth = width - padding * 2;
+            const chartHeight = height - padding * 2;
+            
+            if (chartWidth <= 0 || chartHeight <= 0) return;
+            
+            // Find max values for scaling
+            const maxValue = Math.max(...plannedData, ...realData, 10);
+            
+            // Draw background
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, width, height);
+            
+            // Draw grid lines
+            ctx.strokeStyle = '#e5e7eb';
+            ctx.lineWidth = 1;
+            
+            // Horizontal grid lines
+            for (let i = 0; i <= 5; i++) {
+                const y = padding + (chartHeight / 5) * i;
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(width - padding, y);
+                ctx.stroke();
+                
+                // Y-axis labels
+                ctx.fillStyle = '#6b7280';
+                ctx.font = '12px Inter, sans-serif';
+                ctx.textAlign = 'right';
+                ctx.textBaseline = 'middle';
+                const value = Math.round((maxValue / 5) * (5 - i));
+                ctx.fillText(`${value}h`, padding - 10, y);
+            }
+            
+            // Draw bars
+            const barWidth = chartWidth / functionNames.length;
+            const minBarWidth = 40; // Minimum width for readability
+            const actualBarWidth = Math.max(barWidth * 0.8, minBarWidth);
+            
+            functionNames.forEach((func, index) => {
+                const x = padding + barWidth * index;
+                const centerX = x + barWidth / 2;
+                const plannedHeight = maxValue > 0 ? (plannedData[index] / maxValue) * chartHeight : 0;
+                const realHeight = maxValue > 0 ? (realData[index] / maxValue) * chartHeight : 0;
+                
+                const singleBarWidth = actualBarWidth * 0.35;
+                const gap = actualBarWidth * 0.1;
+                
+                // Planned bar (blue)
+                if (plannedHeight > 0) {
+                    ctx.fillStyle = '#3b82f6';
+                    ctx.fillRect(
+                        centerX - actualBarWidth/2, 
+                        height - padding - plannedHeight, 
+                        singleBarWidth, 
+                        plannedHeight
+                    );
+                    
+                    // Value label
+                    ctx.fillStyle = '#374151';
+                    ctx.font = '10px Inter, sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'bottom';
+                    ctx.fillText(
+                        `${plannedData[index]}h`, 
+                        centerX - actualBarWidth/2 + singleBarWidth/2, 
+                        height - padding - plannedHeight - 3
+                    );
+                }
+                
+                // Real bar (green)
+                if (realHeight > 0) {
+                    ctx.fillStyle = '#10b981';
+                    ctx.fillRect(
+                        centerX - actualBarWidth/2 + singleBarWidth + gap, 
+                        height - padding - realHeight, 
+                        singleBarWidth, 
+                        realHeight
+                    );
+                    
+                    // Value label
+                    ctx.fillStyle = '#374151';
+                    ctx.font = '10px Inter, sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'bottom';
+                    ctx.fillText(
+                        `${realData[index]}h`, 
+                        centerX - actualBarWidth/2 + singleBarWidth + gap + singleBarWidth/2, 
+                        height - padding - realHeight - 3
+                    );
+                }
+                
+                // X-axis labels
+                ctx.fillStyle = '#6b7280';
+                ctx.font = '10px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'top';
+                const funcName = functions[func].name.split(' ')[0];
+                ctx.fillText(funcName, centerX, height - padding + 10);
+            });
+            
+            // Draw chart title
+            ctx.fillStyle = '#111827';
+            ctx.font = 'bold 14px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            ctx.fillText('Comparativo por Função', width / 2, 20);
+        }
+
+        // Chart filter functionality
+        function setupChartFilters() {
+            document.querySelectorAll('.chart-filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Update active state
+                    document.querySelectorAll('.chart-filter-btn').forEach(b => {
+                        b.classList.remove('active', 'bg-blue-100', 'text-blue-700');
+                        b.classList.add('text-gray-600');
+                    });
+                    
+                    this.classList.add('active', 'bg-blue-100', 'text-blue-700');
+                    this.classList.remove('text-gray-600');
+                    
+                    // Update chart based on filter
+                    const filter = this.getAttribute('data-filter');
+                    updateChart(); // For now, just refresh the chart
+                });
+            });
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.getAttribute('data-section');
+                    switchSection(section);
+                });
+            });
+
+            // Mobile menu
+            document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+                document.getElementById('sidebar').classList.toggle('open');
+            });
+
+            // Settings
+            document.getElementById('startTime').addEventListener('change', updateDailyHours);
+            document.getElementById('endTime').addEventListener('change', updateDailyHours);
+            document.getElementById('breakTime').addEventListener('input', updateDailyHours);
+            document.getElementById('updatePeriod').addEventListener('click', updatePeriod);
+            document.getElementById('clearPlanned').addEventListener('click', () => clearTable('planned'));
+            document.getElementById('clearReal').addEventListener('click', () => clearTable('real'));
+
+            // Initialize
+            updateCurrentPeriod();
+            generatePeriodDates();
+            generateTables();
+            updateDailyHours();
+            setupChartFilters();
+            
+            // Initialize chart with proper timing
+            setTimeout(() => {
+                initChart();
+                // Also update when switching to analytics section
+                const analyticsNav = document.querySelector('[data-section="analytics"]');
+                if (analyticsNav) {
+                    analyticsNav.addEventListener('click', () => {
+                        setTimeout(initChart, 50);
+                    });
+                }
+            }, 200);
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97ba692ba5e0c1b6',t:'MTc1NzI5MjE5Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
